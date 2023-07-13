@@ -1,8 +1,6 @@
-use std::str::FromStr;
-
 fn day1(input: &str, days: usize) -> u64 {
     let mut elves = vec![0];
-    for calories in input.lines().map(|v| u64::from_str(v).unwrap_or(0)) {
+    for calories in input.lines().map(|v| v.parse().unwrap_or(0)) {
         match calories {
             0 => elves.push(0),
             _ => {

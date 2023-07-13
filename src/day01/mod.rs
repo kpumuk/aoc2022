@@ -2,14 +2,11 @@ use std::str::FromStr;
 
 fn day1(input: &str, days: usize) -> u64 {
     let mut elves = Vec::<u64>::new();
-    for i in input.lines() {
-        match i {
-            "" => elves.push(0),
+    for calories in input.lines().map(|v| u64::from_str(v).unwrap_or(0)) {
+        match calories {
+            0 => elves.push(0),
             _ => {
-                let current_value = u64::from_str(i).unwrap_or(0);
-                elves
-                    .last_mut()
-                    .and_then(|elve| Some(*elve += current_value));
+                elves.last_mut().map(|elve| Some(*elve += calories));
             }
         }
     }

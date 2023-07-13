@@ -14,8 +14,7 @@ fn day1(input: &str, days: usize) -> u64 {
         }
     }
     elves.sort();
-    elves.reverse();
-    elves[..days].iter().sum()
+    elves[elves.len() - days..].iter().sum()
 }
 
 #[cfg(test)]

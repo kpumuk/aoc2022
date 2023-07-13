@@ -6,9 +6,10 @@ fn day1(input: &str, days: usize) -> u64 {
         match i {
             "" => elves.push(0),
             _ => {
-                let last_elve = elves.pop().unwrap_or(0);
                 let current_value = u64::from_str(i).unwrap_or(0);
-                elves.push(last_elve + current_value)
+                elves
+                    .last_mut()
+                    .and_then(|elve| Some(*elve += current_value));
             }
         }
     }

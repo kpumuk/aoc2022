@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 fn day1(input: &str, days: usize) -> u64 {
-    let mut elves = Vec::<u64>::new();
+    let mut elves = vec![0];
     for calories in input.lines().map(|v| u64::from_str(v).unwrap_or(0)) {
         match calories {
             0 => elves.push(0),
@@ -17,6 +17,16 @@ fn day1(input: &str, days: usize) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn part1_single_elve() {
+        assert_eq!(day1("5", 1), 5);
+    }
+
+    #[test]
+    fn part1_first_elve_wins() {
+        assert_eq!(day1("5\n\n4", 1), 5);
+    }
 
     #[test]
     fn part1_example() {

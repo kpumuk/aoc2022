@@ -1,6 +1,37 @@
 use std::fmt;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::str::FromStr;
+
+#[derive(Debug)]
+enum ParseError {
+    InvalidRule(String),
+    UnexpectedFigureToken(u8, String),
+    UnexpectedOutcomeToken(u8, String),
+}
+
+impl Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ParseError::InvalidRule(rule) => {
+                write!(f, "The rule {:?} is invalid. Expected a letter (A-C) followed by a letter (A-C or X-Z), separated with space", rule)
+            }
+            ParseError::UnexpectedFigureToken(b, rule) => {
+                write!(
+                    f,
+                    "Unexpected figure token {:?} in rule {:?}, expected one of A-C or X-Z",
+                    *b as char, rule
+                )
+            }
+            ParseError::UnexpectedOutcomeToken(b, rule) => {
+                write!(
+                    f,
+                    "Unexpected outcome token {:?} in rule {:?}, expected one of X-Z",
+                    *b as char, rule
+                )
+            }
+        }
+    }
+}
 
 #[derive(Debug)]
 enum Figure {
@@ -58,24 +89,28 @@ impl Figure {
     }
 }
 
-impl From<u8> for Figure {
-    fn from(value: u8) -> Self {
+impl TryFrom<u8> for Figure {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            b'A' | b'X' => Figure::Rock,
-            b'B' | b'Y' => Figure::Paper,
-            b'C' | b'Z' => Figure::Scissors,
-            _ => unimplemented!(),
+            b'A' | b'X' => Ok(Figure::Rock),
+            b'B' | b'Y' => Ok(Figure::Paper),
+            b'C' | b'Z' => Ok(Figure::Scissors),
+            _ => Err(()),
         }
     }
 }
 
-impl From<u8> for Outcome {
-    fn from(value: u8) -> Self {
+impl TryFrom<u8> for Outcome {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            b'X' => Outcome::Lost,
-            b'Y' => Outcome::Draw,
-            b'Z' => Outcome::Won,
-            _ => unimplemented!(),
+            b'X' => Ok(Outcome::Lost),
+            b'Y' => Ok(Outcome::Draw),
+            b'Z' => Ok(Outcome::Won),
+            _ => Err(()),
         }
     }
 }
@@ -102,18 +137,24 @@ impl Score for Rule1 {
 }
 
 impl FromStr for Rule1 {
-    type Err = ();
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let b = s.as_bytes();
+        if b.len() != 3 || b[1] != b' ' {
+            return Err(ParseError::InvalidRule(s.to_owned()));
+        }
+        let (them, me) = (b[0], b[2]);
         Ok(Rule1 {
-            them: Figure::from(b[0]),
-            me: Figure::from(b[2]),
+            them: Figure::try_from(them)
+                .map_err(|_| ParseError::UnexpectedFigureToken(them, s.to_owned()))?,
+            me: Figure::try_from(me)
+                .map_err(|_| ParseError::UnexpectedFigureToken(me, s.to_owned()))?,
         })
     }
 }
 
-impl fmt::Display for Rule1 {
+impl Display for Rule1 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
@@ -138,18 +179,23 @@ impl Score for Rule2 {
 }
 
 impl FromStr for Rule2 {
-    type Err = ();
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let b = s.as_bytes();
+        if b.len() != 3 || b[1] != b' ' {
+            return Err(ParseError::InvalidRule(s.to_owned()));
+        }
         Ok(Rule2 {
-            them: Figure::from(b[0]),
-            outcome: Outcome::from(b[2]),
+            them: Figure::try_from(b[0])
+                .map_err(|_| ParseError::UnexpectedFigureToken(b[0], s.to_owned()))?,
+            outcome: Outcome::try_from(b[2])
+                .map_err(|_| ParseError::UnexpectedOutcomeToken(b[2], s.to_owned()))?,
         })
     }
 }
 
-impl fmt::Display for Rule2 {
+impl Display for Rule2 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let me = self.them.for_their_outcome(&self.outcome);
         write!(
@@ -163,18 +209,20 @@ impl fmt::Display for Rule2 {
     }
 }
 
+#[cfg(test)]
 fn solution<T>(input: &str) -> u64
 where
-    T: Score,
-    T: FromStr,
-    <T as FromStr>::Err: Debug,
+    T: Score + FromStr,
+    <T as FromStr>::Err: Display,
 {
-    input
-        .lines()
-        .map(|line| T::from_str(line).unwrap())
-        // .inspect(|rule| println!("{}", rule))
-        .map(|rule| rule.score())
-        .sum()
+    let x: Result<Vec<T>, <T as FromStr>::Err> =
+        input.lines().map(|line| T::from_str(line)).collect();
+    match x {
+        Ok(rows) => rows.iter().map(Score::score).sum(),
+        Err(err) => {
+            panic!("Error occurred: {}", err);
+        }
+    }
 }
 
 #[cfg(test)]

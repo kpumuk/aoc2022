@@ -4,7 +4,7 @@ fn day1(input: &str, days: usize) -> u64 {
         match calories {
             0 => elves.push(0),
             _ => {
-                elves.last_mut().map(|elve| Some(*elve += calories));
+                elves.last_mut().map(|elf| *elf += calories);
             }
         }
     }

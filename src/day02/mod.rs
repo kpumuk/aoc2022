@@ -163,19 +163,15 @@ impl fmt::Display for Rule2 {
     }
 }
 
-fn solution1(input: &str) -> u64 {
+fn solution<T>(input: &str) -> u64
+where
+    T: Score,
+    T: FromStr,
+    <T as FromStr>::Err: Debug,
+{
     input
         .lines()
-        .map(|line| Rule1::from_str(line).unwrap())
-        // .inspect(|rule| println!("{}", rule))
-        .map(|rule| rule.score())
-        .sum()
-}
-
-fn solution2(input: &str) -> u64 {
-    input
-        .lines()
-        .map(|line| Rule2::from_str(line).unwrap())
+        .map(|line| T::from_str(line).unwrap())
         // .inspect(|rule| println!("{}", rule))
         .map(|rule| rule.score())
         .sum()
@@ -187,22 +183,22 @@ mod tests {
 
     #[test]
     fn test_solution1_example() {
-        assert_eq!(solution1(EXAMPLE), 15);
+        assert_eq!(solution::<Rule1>(EXAMPLE), 15);
     }
 
     #[test]
     fn test_solution1_solution() {
-        assert_eq!(solution1(INPUT), 11386);
+        assert_eq!(solution::<Rule1>(INPUT), 11386);
     }
 
     #[test]
     fn test_solution2_example() {
-        assert_eq!(solution2(EXAMPLE), 12);
+        assert_eq!(solution::<Rule2>(EXAMPLE), 12);
     }
 
     #[test]
     fn test_solution2_solution() {
-        assert_eq!(solution2(INPUT), 13600);
+        assert_eq!(solution::<Rule2>(INPUT), 13600);
     }
 
     const EXAMPLE: &str = include_str!("example.txt");

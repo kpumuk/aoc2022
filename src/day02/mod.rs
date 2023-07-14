@@ -43,7 +43,7 @@ impl Figure {
         }
     }
 
-    fn for_outcome(&self, outcome: &Outcome) -> Figure {
+    fn for_their_outcome(&self, outcome: &Outcome) -> Figure {
         match (self, outcome) {
             (Figure::Rock, Outcome::Lost) => Figure::Scissors,
             (Figure::Scissors, Outcome::Lost) => Figure::Paper,
@@ -133,7 +133,7 @@ struct Rule2 {
 
 impl Score for Rule2 {
     fn score(&self) -> u64 {
-        self.them.for_outcome(&self.outcome).score() + self.outcome.score()
+        self.them.for_their_outcome(&self.outcome).score() + self.outcome.score()
     }
 }
 
@@ -151,7 +151,7 @@ impl FromStr for Rule2 {
 
 impl fmt::Display for Rule2 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let me = self.them.for_outcome(&self.outcome);
+        let me = self.them.for_their_outcome(&self.outcome);
         write!(
             f,
             "{:?} < {:?} = {:?} ({})",

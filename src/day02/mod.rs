@@ -215,9 +215,9 @@ where
     T: Score + FromStr,
     <T as FromStr>::Err: Display,
 {
-    let x: Result<Vec<T>, <T as FromStr>::Err> =
+    let rules: Result<Vec<T>, <T as FromStr>::Err> =
         input.lines().map(|line| T::from_str(line)).collect();
-    match x {
+    match rules {
         Ok(rows) => rows.iter().map(Score::score).sum(),
         Err(err) => {
             panic!("Error occurred: {}", err);

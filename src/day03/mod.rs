@@ -20,18 +20,18 @@ impl From<u8> for Item {
 
 #[cfg(test)]
 fn solution_part1(input: &str) -> u64 {
-    let mut total = 0;
-    for line in input.lines() {
-        let (left, right) = line.split_at(line.len() / 2);
-        let left: HashSet<u8> = HashSet::from_iter(left.bytes());
-        total += right
-            .bytes()
-            .find(|b| left.contains(&b))
-            .map(|b| Item::from(b).priority())
-            .unwrap_or(0);
-    }
-
-    total
+    input
+        .lines()
+        .map(|line| {
+            let (left, right) = line.split_at(line.len() / 2);
+            let left: HashSet<u8> = HashSet::from_iter(left.bytes());
+            right
+                .bytes()
+                .find(|b| left.contains(b))
+                .map(|b| Item::from(b).priority())
+                .unwrap_or(0)
+        })
+        .sum()
 }
 
 #[cfg(test)]

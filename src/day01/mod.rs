@@ -1,3 +1,4 @@
+#[cfg(test)]
 fn solution(input: &str, days: usize) -> u64 {
     let mut elves = vec![0];
     for calories in input.lines().map(|v| v.parse().unwrap_or(0)) {

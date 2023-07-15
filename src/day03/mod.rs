@@ -37,22 +37,17 @@ fn solution_part1(input: &str) -> u64 {
 #[cfg(test)]
 fn solution_part2(input: &str) -> u64 {
     let mut total = 0;
-    let mut first = HashSet::new();
-    let mut second = HashSet::new();
-
+    let mut lines: Vec<HashSet<u8>> = vec![];
     for line in input.lines() {
-        if first.is_empty() {
-            first = HashSet::from_iter(line.bytes());
-        } else if second.is_empty() {
-            second = HashSet::from_iter(line.bytes());
+        if lines.len() < 2 {
+            lines.push(HashSet::from_iter(line.bytes()))
         } else {
             total += line
                 .bytes()
-                .find(|b| first.contains(&b) && second.contains(&b))
+                .find(|b| lines.iter().all(|h| h.contains(b)))
                 .map(|b| Item::from(b).priority())
                 .unwrap_or(0);
-            first.clear();
-            second.clear();
+            lines.clear();
         }
     }
 

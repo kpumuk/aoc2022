@@ -11,10 +11,7 @@ impl Range {
     }
 
     fn overlaps(&self, other: &Self) -> bool {
-        !(self.to < other.from
-            || other.to < self.from
-            || self.from > other.to
-            || other.from > self.to)
+        self.to >= other.from && other.to >= self.from
     }
 }
 

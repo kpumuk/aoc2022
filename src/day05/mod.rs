@@ -2,7 +2,29 @@ use crate::day05::ParseInstructionError::{InvalidCount, InvalidFormat, InvalidFr
 use std::str::FromStr;
 use std::usize;
 
-type Crate = char;
+#[derive(Clone, PartialEq)]
+struct Crate(char);
+
+impl Crate {
+    const NONE: Crate = Crate(' ');
+}
+
+impl From<char> for Crate {
+    fn from(value: char) -> Self {
+        Crate(value)
+    }
+}
+
+impl<'a> FromIterator<&'a Crate> for String {
+    fn from_iter<T: IntoIterator<Item = &'a Crate>>(iter: T) -> Self {
+        let mut s = String::new();
+        for cr in iter {
+            s.push(cr.0);
+        }
+
+        s
+    }
+}
 
 struct Ship {
     stacks: Vec<Vec<Crate>>,
@@ -18,6 +40,10 @@ impl Ship {
     }
 
     fn put_crate(&mut self, to: usize, cr: Crate) {
+        if cr == Crate::NONE {
+            return;
+        }
+
         while self.stacks.len() < to {
             self.stacks.push(Vec::new());
         }
@@ -41,15 +67,17 @@ impl Ship {
     }
 
     fn top_view(&self) -> String {
-        String::from_iter(self.stacks.iter().map(|stack| *stack.last().unwrap()))
+        String::from_iter(
+            self.stacks
+                .iter()
+                .map(|stack| stack.last().unwrap_or(&Crate::NONE)),
+        )
     }
 
     fn load(&mut self, layout: Vec<&str>) {
         for line in layout.into_iter().rev().skip(1) {
             for (i, cr) in line.chars().skip(1).step_by(4).enumerate() {
-                if cr != ' ' {
-                    self.put_crate(i + 1, cr as Crate);
-                };
+                self.put_crate(i + 1, Crate::from(cr));
             }
         }
     }

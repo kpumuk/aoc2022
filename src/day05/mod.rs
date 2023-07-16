@@ -1,3 +1,4 @@
+use crate::day05::ParseInstructionError::{InvalidCount, InvalidFormat, InvalidFrom, InvalidTo};
 use std::str::FromStr;
 use std::usize;
 
@@ -8,42 +9,38 @@ struct Ship {
 }
 
 impl Ship {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Ship { stacks: Vec::new() }
     }
 
-    pub fn pick_crate(&mut self, from: usize) -> Option<Crate> {
+    fn pick_crate(&mut self, from: usize) -> Option<Crate> {
         self.stacks[from - 1].pop()
     }
 
-    pub fn put_crate(&mut self, to: usize, cr: Crate) {
+    fn put_crate(&mut self, to: usize, cr: Crate) {
         while self.stacks.len() < to {
             self.stacks.push(Vec::new());
         }
         self.stacks[to - 1].push(cr);
     }
 
-    pub fn pick_crates(&mut self, from: usize, count: usize) -> Option<Vec<Crate>> {
+    fn pick_crates(&mut self, from: usize, count: usize) -> Option<Vec<Crate>> {
         if self.stacks[from - 1].len() < count {
             return None;
         }
 
         let first = self.stacks[from - 1].len() - count;
-        let crates: Vec<Crate> = (&self.stacks[from - 1])
-            .iter()
-            .skip(first)
-            .cloned()
-            .collect();
+        let crates: Vec<Crate> = self.stacks[from - 1].iter().skip(first).cloned().collect();
         self.stacks[from - 1].truncate(first);
 
         Some(crates)
     }
 
-    pub fn put_crates(&mut self, to: usize, crates: &mut Vec<Crate>) {
+    fn put_crates(&mut self, to: usize, crates: &mut Vec<Crate>) {
         self.stacks[to - 1].append(crates);
     }
 
-    pub fn top_view(&self) -> String {
+    fn top_view(&self) -> String {
         String::from_iter(self.stacks.iter().map(|stack| *stack.last().unwrap()))
     }
 }
@@ -72,6 +69,48 @@ impl CrateMover for CrateMover9001 {
     }
 }
 
+#[derive(Debug)]
+struct Instruction {
+    from: usize,
+    to: usize,
+    count: usize,
+}
+
+#[derive(Debug)]
+enum ParseInstructionError {
+    InvalidFormat(String),
+    InvalidCount(String),
+    InvalidFrom(String),
+    InvalidTo(String),
+}
+
+impl FromStr for Instruction {
+    type Err = ParseInstructionError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let words: Vec<&str> = s.split(' ').collect();
+        if words.len() != 6 || words[0] != "move" || words[2] != "from" || words[4] != "to" {
+            return Err(InvalidFormat(format!("Invalid instruction format {:?}", s)));
+        }
+        let count = usize::from_str(words[1])
+            .map_err(|_| InvalidCount(format!("Invalid crates count in {:?} instruction", s)))?;
+        let from = usize::from_str(words[3]).map_err(|_| {
+            InvalidFrom(format!(
+                "Invalid crate starting position in {:?} instruction",
+                s
+            ))
+        })?;
+        let to = usize::from_str(words[5]).map_err(|_| {
+            InvalidTo(format!(
+                "Invalid crate target position in {:?} instruction",
+                s
+            ))
+        })?;
+
+        Ok(Instruction { count, from, to })
+    }
+}
+
 fn solution<T>(input: &str) -> String
 where
     T: CrateMover,
@@ -87,14 +126,15 @@ where
             };
         }
     }
-    let instructions: Vec<&str> = liter.collect();
-    for instr in instructions.iter() {
-        let words: Vec<&str> = instr.split(' ').collect();
-        let count = usize::from_str(words[1]).unwrap();
-        let from = usize::from_str(words[3]).unwrap();
-        let to = usize::from_str(words[5]).unwrap();
+    for instruction in liter {
+        let instruction = Instruction::from_str(instruction).unwrap();
 
-        T::move_crates(&mut ship, from, to, count);
+        T::move_crates(
+            &mut ship,
+            instruction.from,
+            instruction.to,
+            instruction.count,
+        );
     }
     ship.top_view()
 }

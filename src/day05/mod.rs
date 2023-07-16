@@ -43,6 +43,16 @@ impl Ship {
     fn top_view(&self) -> String {
         String::from_iter(self.stacks.iter().map(|stack| *stack.last().unwrap()))
     }
+
+    fn load(&mut self, layout: Vec<&str>) {
+        for line in layout.into_iter().rev().skip(1) {
+            for (i, cr) in line.chars().skip(1).step_by(4).enumerate() {
+                if cr != ' ' {
+                    self.put_crate(i + 1, cr as Crate);
+                };
+            }
+        }
+    }
 }
 
 trait CrateMover {
@@ -118,14 +128,8 @@ where
     let mut liter = input.lines();
     let mut ship = Ship::new();
 
-    let stacks: Vec<&str> = liter.by_ref().take_while(|line| !line.is_empty()).collect();
-    for line in stacks.iter().rev().skip(1) {
-        for (i, cr) in line.chars().skip(1).step_by(4).enumerate() {
-            if cr != ' ' {
-                ship.put_crate(i + 1, cr as Crate);
-            };
-        }
-    }
+    ship.load(liter.by_ref().take_while(|line| !line.is_empty()).collect());
+
     for instruction in liter {
         let instruction = Instruction::from_str(instruction).unwrap();
 

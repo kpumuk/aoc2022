@@ -34,9 +34,7 @@ fn solution(input: &str, version: &Version) -> String {
         if let Version::CrateMover9001 = version {
             tmp.reverse();
         }
-        for i in 0..cnt {
-            cranes[to].push(tmp[i]);
-        }
+        cranes[to].append(&mut tmp);
     }
     String::from_iter(cranes.iter().map(|crane| *crane.last().unwrap()))
 }

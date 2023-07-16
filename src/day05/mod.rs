@@ -40,14 +40,13 @@ impl Ship {
     }
 
     fn put_crate(&mut self, to: usize, cr: Crate) {
-        if cr == Crate::NONE {
-            return;
-        }
-
         while self.stacks.len() < to {
             self.stacks.push(Vec::new());
         }
-        self.stacks[to - 1].push(cr);
+
+        if cr != Crate::NONE {
+            self.stacks[to - 1].push(cr);
+        }
     }
 
     fn pick_crates(&mut self, from: usize, count: usize) -> Option<Vec<Crate>> {
@@ -174,6 +173,23 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_ship_empty_stack() {
+        let mut ship = Ship::new();
+        ship.put_crate(2, Crate('A'));
+        assert_eq!(ship.top_view(), " A");
+    }
+
+    #[test]
+    fn test_ship_put_empty_crate() {
+        let mut ship = Ship::new();
+        ship.put_crate(2, Crate('A'));
+        ship.put_crate(3, Crate(' '));
+        assert_eq!(ship.top_view(), " A ");
+        ship.put_crate(3, Crate('B'));
+        assert_eq!(ship.top_view(), " AB");
+    }
 
     #[test]
     fn test_part1_example() {

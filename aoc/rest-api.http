@@ -1,0 +1,11 @@
+< {%
+    request.variables.set("aocFormattedDay", "06")
+    request.variables.set("aocDay", "6")
+    request.variables.set("aocYear", "2022")
+%}
+
+GET https://adventofcode.com/{{aocYear}}/day/{{aocDay}}/input
+Accept: text/plain
+Cookie: session={{session}}
+
+>>! ../src/day{{aocFormattedDay}}/input.txt

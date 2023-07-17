@@ -1,7 +1,11 @@
+### Retrieve problem input
 < {%
-    request.variables.set("aocFormattedDay", "06")
-    request.variables.set("aocDay", "6")
-    request.variables.set("aocYear", "2022")
+    const day = 6;
+    const year = 2022;
+
+    request.variables.set("aocFormattedDay", day.toString().padStart(2, '0'))
+    request.variables.set("aocDay", day.toString())
+    request.variables.set("aocYear", year.toString())
 %}
 
 GET https://adventofcode.com/{{aocYear}}/day/{{aocDay}}/input

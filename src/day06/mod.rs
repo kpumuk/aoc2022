@@ -6,7 +6,7 @@ fn solution(input: &str, marker_size: usize) -> usize {
         .collect::<Vec<char>>()
         .windows(marker_size)
         .enumerate()
-        .find(|(idx, group)| HashSet::<&char>::from_iter(*group).len() == marker_size)
+        .find(|(_, group)| HashSet::<&char>::from_iter(*group).len() == marker_size)
         .unwrap()
         .0
         + marker_size

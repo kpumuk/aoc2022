@@ -1,5 +1,10 @@
 # Learning Rust with Advent of Code
 
+[![Static Badge](https://img.shields.io/badge/Advent%20of%20Code-2022-blue)](https://adventofcode.com/2022)
+[![Tests](https://github.com/kpumuk/aoc2022/actions/workflows/rust.yml/badge.svg)](https://github.com/kpumuk/aoc2022/actions/workflows/rust.yml)
+[![Static Badge](https://img.shields.io/badge/Support-Ukraine-blue?labelColor=%23F8DD4E)](https://dmytro.sh/stand-with-ukraine/)
+
+
 This repository contains my attempts at learning Rust through solving Advent of Code 2022 problems.
 
 ## Running Tests

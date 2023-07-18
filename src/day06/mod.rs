@@ -1,20 +1,18 @@
-use std::collections::HashSet;
-
-fn solution(input: &str, marker_size: usize) -> usize {
-    input
-        .chars()
-        .collect::<Vec<char>>()
-        .windows(marker_size)
-        .enumerate()
-        .find(|(_, group)| HashSet::<&char>::from_iter(*group).len() == marker_size)
-        .unwrap()
-        .0
-        + marker_size
-}
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::collections::HashSet;
+
+    fn solution(input: &str, marker_size: usize) -> usize {
+        input
+            .chars()
+            .collect::<Vec<char>>()
+            .windows(marker_size)
+            .enumerate()
+            .find(|(_, group)| HashSet::<&char>::from_iter(*group).len() == marker_size)
+            .unwrap()
+            .0
+            + marker_size
+    }
 
     #[test]
     fn test_part1_example() {

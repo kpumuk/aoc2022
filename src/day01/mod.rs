@@ -1,29 +1,28 @@
 #[cfg(test)]
-fn solution(input: &str, days: usize) -> u64 {
-    let mut elves = vec![0];
-    for calories in input.lines().map(|v| v.parse().unwrap_or(0)) {
-        match calories {
-            0 => elves.push(0),
-            _ => {
-                elves.last_mut().map(|elf| *elf += calories);
+mod tests {
+    fn solution(input: &str, days: usize) -> u64 {
+        let mut elves = vec![0];
+        for calories in input.lines().map(|v| v.parse().unwrap_or(0)) {
+            match calories {
+                0 => elves.push(0),
+                _ => {
+                    if let Some(elf) = elves.last_mut() {
+                        *elf += calories
+                    }
+                }
             }
         }
+        elves.sort();
+        elves[elves.len() - days..].iter().sum()
     }
-    elves.sort();
-    elves[elves.len() - days..].iter().sum()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
 
     #[test]
-    fn part1_single_elve() {
+    fn part1_single_elf() {
         assert_eq!(solution("5", 1), 5);
     }
 
     #[test]
-    fn part1_first_elve_wins() {
+    fn part1_first_elf_wins() {
         assert_eq!(solution("5\n\n4", 1), 5);
     }
 

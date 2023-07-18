@@ -5,7 +5,11 @@
 [![Static Badge](https://img.shields.io/badge/Support-Ukraine-blue?labelColor=%23F8DD4E)](https://dmytro.sh/stand-with-ukraine/)
 
 
-This repository contains my attempts at learning Rust through solving Advent of Code 2022 problems.
+This repository contains my attempts at learning Rust through solving Advent of Code 2022 problems. The goal I set for myself is to write readable idiomatic Rust code (and I will most definitely fail at both), and I do not really care about coming up with as smartest algorithm as possible.
+
+I'm at the beginning of my Rust learning path. This should serve as a warning to anyone thinking about using this in production either by direct copying or using code assistants trained on this repository.
+
+If you are interested in discussing any of my solutions, Rust in general, if you are trying to learn Rust or want to brag about mastering it, I opened [discussions](https://github.com/kpumuk/aoc2022/discussions). 
 
 ## Running Tests
 

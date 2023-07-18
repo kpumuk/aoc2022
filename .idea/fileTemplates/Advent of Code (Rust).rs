@@ -1,18 +1,27 @@
-fn solution(input: &str) -> usize {
-    input.len()
-}
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    fn solution(input: &str) -> usize {
+        input.len()
+    }
 
     #[test]
-    fn test_example() {
+    fn test_part1_example() {
         assert_eq!(solution(EXAMPLE), 0);
     }
 
     #[test]
-    fn test_solution() {
+    fn test_part1_solution() {
+        assert_eq!(solution(INPUT), 0);
+    }
+
+
+    #[test]
+    fn test_part2_example() {
+        assert_eq!(solution(EXAMPLE), 0);
+    }
+
+    #[test]
+    fn test_part2_solution() {
         assert_eq!(solution(INPUT), 0);
     }
 
